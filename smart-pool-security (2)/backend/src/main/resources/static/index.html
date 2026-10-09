@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0c1728">
+  <title>Smart Pool Security</title>
+  <link rel="stylesheet" href="/assets/app.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <a class="brand" href="#dashboard" aria-label="Smart Pool Security inicio">
+        <span class="brand-mark">S</span><span><b>SMART POOL</b><small>SECURITY CENTER</small></span>
+      </a>
+      <div class="side-label">OPERACIÓN</div>
+      <nav class="navigation" aria-label="Navegación principal">
+        <a href="#dashboard" data-page="dashboard" class="nav-link active"><span>◫</span> Resumen</a>
+        <a href="#pools" data-page="pools" class="nav-link"><span>◈</span> Piscinas</a>
+        <a href="#cameras" data-page="cameras" class="nav-link"><span>◉</span> Cámaras</a>
+        <a href="#alerts" data-page="alerts" class="nav-link"><span>⚑</span> Alertas <i id="alert-count" class="nav-count">0</i></a>
+        <a href="#incidents" data-page="incidents" class="nav-link"><span>▤</span> Incidentes</a>
+        <a href="#statistics" data-page="statistics" class="nav-link"><span>▥</span> Estadísticas</a>
+        <a href="#users" data-page="users" class="nav-link"><span>♙</span> Usuarios</a>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="connection"><span class="live-dot"></span><span><b>Backend conectado</b><small>Datos sincronizados</small></span></div>
+        <button id="logout" class="logout-button">↪&nbsp; Cerrar sesión</button>
+        <small class="version">SMART POOL SECURITY · DEMO</small>
+      </div>
+    </aside>
+
+    <main class="main-area">
+      <header class="topbar">
+        <button id="menu-toggle" class="menu-toggle" aria-label="Abrir menú">☰</button>
+        <div><div class="eyebrow" id="today-label">CENTRO DE CONTROL</div><h1 id="page-title">Resumen general</h1></div>
+        <div class="topbar-right"><span class="connected-pill"><i></i> En línea</span><div class="avatar">SP</div></div>
+      </header>
+      <div class="content" id="content"><div class="loading-card">Conectando con Smart Pool…</div></div>
+    </main>
+  </div>
+  <div id="toast" class="toast" role="status"></div>
+  <script src="/assets/app.js" defer></script>
+</body>
+</html>
