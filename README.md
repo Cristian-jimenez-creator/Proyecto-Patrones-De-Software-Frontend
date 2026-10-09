@@ -6,12 +6,22 @@ Interfaz web estática del proyecto. Este repositorio contiene únicamente HTML,
 
 Abre `index.html` mediante un servidor estático local (por ejemplo, Live Server). La interfaz consulta la API configurada en `assets/app.js` y `assets/login.js`; por defecto usa `https://smart-pool-security.onrender.com`.
 
-## Publicación en Render
+## Render
 
-Este repositorio incluye `render.yaml` para publicar los archivos como un Static Site gratuito. La URL de la interfaz será distinta a la del backend. El backend debe permitir el origen exacto del sitio en su variable `SMARTPOOL_CORS_ALLOWED_ORIGINS` (por ejemplo, `https://NOMBRE-DEL-SITIO.onrender.com`). No se debe usar `*` porque la sesión de acceso usa cookies.
-
-El inicio de sesión, CSRF, cookies de sesión y alertas en tiempo real se comunican con el backend mediante HTTPS. El frontend no contiene credenciales ni se conecta directamente a PostgreSQL.
+La configuración del servicio de Render que ya estaba funcionando no se cambió. Este repositorio solo contiene el código del frontend y no crea ni modifica servicios de Render.
 
 ## Estado de la demostración
 
 El panel presenta información de demostración. No hay cámaras físicas ni un modelo real de IA conectados.
+
+## Wiki y documentación del proyecto
+
+La Wiki del proyecto y sus páginas siguen disponibles aquí:
+
+- [Wiki del proyecto](https://github.com/Cristian-jimenez-creator/Proyecto-final-Patrones-De-Software/wiki)
+- [API REST](https://github.com/Cristian-jimenez-creator/Proyecto-final-Patrones-De-Software/wiki/API-REST)
+- [Arquitectura y estado](https://github.com/Cristian-jimenez-creator/Proyecto-final-Patrones-De-Software/wiki/Arquitectura)
+- [Modelo de datos](https://github.com/Cristian-jimenez-creator/Proyecto-final-Patrones-De-Software/wiki/Modelo-de-datos)
+- [Ejecución local](https://github.com/Cristian-jimenez-creator/Proyecto-final-Patrones-De-Software/wiki/Desarrollo-local)
+- [Despliegue en Render](https://github.com/Cristian-jimenez-creator/Proyecto-final-Patrones-De-Software/wiki/Despliegue-en-Render)
+- [Alcance y requisitos](https://github.com/Cristian-jimenez-creator/Proyecto-final-Patrones-De-Software/wiki/Alcance-y-requisitos)
