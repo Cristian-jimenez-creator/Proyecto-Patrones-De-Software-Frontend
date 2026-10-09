@@ -53,7 +53,15 @@ Render usa PostgreSQL y las variables de entorno definidas en su panel. No guard
 - [Despliegue en Render](https://github.com/Cristian-jimenez-creator/Proyecto-final-Patrones-De-Software/wiki/Despliegue-en-Render)
 - [Alcance y requisitos](https://github.com/Cristian-jimenez-creator/Proyecto-final-Patrones-De-Software/wiki/Alcance-y-requisitos)
 
-## Equipo
+## En porceso
+Está hecho con Spring Boot y recibe las solicitudes del frontend mediante una API REST.
+Procesa operaciones como consultar piscinas, cámaras y alertas.
+Guarda y consulta datos en PostgreSQL cuando está en Render; localmente se usa H2.
+El análisis de IA y las cámaras son simulados en la versión actual; todavía no detecta emergencias reales.
+
+
+
+## Equipo 
 
 - Cristian Alexis Jiménez Bastidas
 - Armando Hernandes
