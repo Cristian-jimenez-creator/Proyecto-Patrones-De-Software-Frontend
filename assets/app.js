@@ -1,4 +1,6 @@
 const state = { pools: [], cameras: [], alerts: [], users: [], statistics: null, page: 'dashboard', alertFilter: 'all' };
+const API_BASE_URL = (window.SMARTPOOL_API_BASE || 'https://smart-pool-security.onrender.com').replace(/\/$/, '');
+const apiUrl = path => `${API_BASE_URL}${path}`;
 const titleMap = { dashboard: 'Resumen general', pools: 'Piscinas', cameras: 'Cámaras', alerts: 'Alertas', incidents: 'Incidentes', statistics: 'Estadísticas', users: 'Usuarios' };
 let csrfToken = null;
 let toastTimer;
@@ -18,7 +20,7 @@ const notify = (message, error = false) => {
 async function getCsrf() {
   if (csrfToken) return csrfToken;
   try {
-    const response = await fetch('/api/csrf', { credentials: 'same-origin' });
+    const response = await fetch(apiUrl('/api/csrf'), { credentials: 'include' });
     if (response.ok) csrfToken = await response.json();
   } catch { /* Local development can run without CSRF when auth is disabled. */ }
   return csrfToken;
@@ -31,7 +33,7 @@ async function api(path, options = {}) {
     const csrf = await getCsrf();
     if (csrf?.token && csrf?.headerName) headers.set(csrf.headerName, csrf.token);
   }
-  const response = await fetch(path, { ...options, headers, credentials: 'same-origin' });
+  const response = await fetch(apiUrl(path), { ...options, headers, credentials: 'include' });
   if (response.status === 401 || (response.redirected && response.url.includes('/login.html'))) {
     location.assign('/login.html');
     throw new Error('Inicia sesión para continuar.');
@@ -172,6 +174,6 @@ document.querySelectorAll('.nav-link').forEach(a=>a.addEventListener('click',()=
 window.addEventListener('hashchange',render);
 
 refresh().then(()=>{
-  try { const stream = new EventSource('/api/alerts/stream'); stream.onmessage=event=>{const alert=JSON.parse(event.data);if(!state.alerts.some(a=>a.id===alert.id)){state.alerts.unshift(alert);render();notify('Nueva alerta recibida.')}};stream.onerror=()=>stream.close(); }
+  try { const stream = new EventSource(apiUrl('/api/alerts/stream'), { withCredentials: true }); stream.onmessage=event=>{const alert=JSON.parse(event.data);if(!state.alerts.some(a=>a.id===alert.id)){state.alerts.unshift(alert);render();notify('Nueva alerta recibida.')}};stream.onerror=()=>stream.close(); }
   catch { /* Browser does not support event streams. */ }
 });

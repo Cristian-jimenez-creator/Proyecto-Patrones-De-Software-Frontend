@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: smart-pool-security-frontend
+    runtime: static
+    plan: free
+    buildCommand: ""
+    staticPublishPath: .
