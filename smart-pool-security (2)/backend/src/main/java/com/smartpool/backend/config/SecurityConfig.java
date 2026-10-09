@@ -23,7 +23,7 @@ public class SecurityConfig {
         } else {
             http.csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
                     .authorizeHttpRequests(auth -> auth
-                            .requestMatchers("/login.html", "/assets/**", "/api/csrf", "/health", "/error").permitAll()
+                            .requestMatchers("/login.html", "/favicon.svg", "/assets/**", "/api/csrf", "/health", "/error").permitAll()
                             .anyRequest().authenticated())
                     .formLogin(form -> form.loginPage("/login.html")
                             .loginProcessingUrl("/login")
