@@ -1,0 +1,13 @@
+.git
+.gitignore
+.tools
+.maven-repository
+.javafx-cache
+backend/target
+desktop
+work
+outputs
+*.log
+*.pid
+*.zip
+!smart-pool-render-source.zip

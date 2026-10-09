@@ -1,0 +1,46 @@
+services:
+  - type: web
+    name: smart-pool-security
+    runtime: docker
+    plan: free
+    region: virginia
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /health
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod
+      - key: SMARTPOOL_AUTH_ENABLED
+        value: "true"
+      - key: SMARTPOOL_AUTH_USERNAME
+        sync: false
+      - key: SMARTPOOL_AUTH_PASSWORD
+        sync: false
+      - key: DB_HOST
+        fromDatabase:
+          name: smart-pool-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: smart-pool-db
+          property: port
+      - key: DB_NAME
+        fromDatabase:
+          name: smart-pool-db
+          property: database
+      - key: DB_USER
+        fromDatabase:
+          name: smart-pool-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: smart-pool-db
+          property: password
+
+databases:
+  - name: smart-pool-db
+    plan: free
+    region: virginia
+    databaseName: smartpool
+    user: smartpool_app
+    postgresMajorVersion: "17"

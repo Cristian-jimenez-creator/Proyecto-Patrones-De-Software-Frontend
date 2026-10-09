@@ -1,0 +1,7 @@
+backend/target/
+desktop/target/
+.tools/
+.maven-repository/
+.javafx-cache/
+backend.pid
+*.log
