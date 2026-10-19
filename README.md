@@ -1,25 +1,42 @@
-# Smart Pool Security — Frontend
+# Smart Pool Security
 
-La interfaz web está dentro de `frontend/` (HTML, CSS, JavaScript e imágenes). El backend Java/Spring Boot está separado en [Proyecto-Patrones-De-Software-Bakend](https://github.com/Cristian-jimenez-creator/Proyecto-Patrones-De-Software-Bakend).
+The application is organized as two separately deployable services:
 
-## Uso local
+- `backend/`: Java 17, Spring Boot REST API, PostgreSQL in production, and local H2 for development.
+- `frontend/`: standalone Spanish HTML, CSS, and JavaScript site.
 
-Abre `frontend/index.html` con Live Server o sirve la carpeta `frontend/` como raíz del sitio. La URL de la API se configura en `frontend/assets/app.js`; actualmente apunta al backend de Render.
+The previous folders `smart-pool-backend/` and `Smart-pool-Frontend/` are preserved as source backups and excluded from Git. Use only the new `backend/` and `frontend/` folders going forward.
 
-## Render
+## Local setup
 
-La configuración del servicio de Render existente se mantiene sin cambios. El código fuente del frontend queda organizado en la carpeta `frontend/`.
+1. Start the API from `backend/` with JDK 17 and Maven: `mvn spring-boot:run`.
+2. Serve `frontend/` with a local static server such as VS Code Live Server at `http://localhost:5500`.
+3. The local API URL is set in `frontend/assets/config.js` to `http://localhost:8080`.
+4. To enable login and registration locally, set `SMARTPOOL_AUTH_ENABLED=true`, `SMARTPOOL_AUTH_USERNAME`, and `SMARTPOOL_AUTH_PASSWORD` before starting the API. The configured admin password must have at least 16 characters.
 
-## Wiki y documentación
+## Separate Render deployment
 
-- [Wiki del proyecto](https://github.com/Cristian-jimenez-creator/Proyecto-final-Patrones-De-Software/wiki)
-- [API REST](https://github.com/Cristian-jimenez-creator/Proyecto-final-Patrones-De-Software/wiki/API-REST)
-- [Arquitectura y estado](https://github.com/Cristian-jimenez-creator/Proyecto-final-Patrones-De-Software/wiki/Arquitectura)
-- [Modelo de datos](https://github.com/Cristian-jimenez-creator/Proyecto-final-Patrones-De-Software/wiki/Modelo-de-datos)
-- [Ejecución local](https://github.com/Cristian-jimenez-creator/Proyecto-final-Patrones-De-Software/wiki/Desarrollo-local)
-- [Despliegue en Render](https://github.com/Cristian-jimenez-creator/Proyecto-final-Patrones-De-Software/wiki/Despliegue-en-Render)
-- [Alcance y requisitos](https://github.com/Cristian-jimenez-creator/Proyecto-final-Patrones-De-Software/wiki/Alcance-y-requisitos)
+Use this repository for both services, with the service-specific root directories:
 
-## Alcance de la demostración
+### Backend Web Service
 
-El panel presenta datos de demostración. Las cámaras físicas y el análisis de inteligencia artificial no están conectados en esta versión.
+- Root Directory: `backend`
+- Runtime: Docker
+- Dockerfile Path: `./Dockerfile`
+- Docker Build Context: `.`
+- Health Check Path: `/health`
+- Add a PostgreSQL database and set `SPRING_PROFILES_ACTIVE=prod`, `SMARTPOOL_AUTH_ENABLED=true`, `SMARTPOOL_AUTH_USERNAME`, `SMARTPOOL_AUTH_PASSWORD`, `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASSWORD`, and `SMARTPOOL_FRONTEND_ORIGIN` in Render.
+
+### Frontend Static Site
+
+- Root Directory: `frontend`
+- Build Command: leave empty
+- Publish Directory: `.`
+- After Render gives the backend URL, set that URL in `frontend/assets/config.js` as `SMARTPOOL_API_URL` and push the change.
+- Set `SMARTPOOL_FRONTEND_ORIGIN` on the backend to the exact public URL of the Static Site, then redeploy the backend.
+
+Do not commit database credentials or admin passwords. The signup form creates user accounts in PostgreSQL with BCrypt-hashed passwords. The admin login remains configured through Render secrets.
+
+## Demo limitations
+
+Pool, camera, and alert records are demonstration data. Camera feeds and AI analysis are simulated; this project does not connect to physical cameras or run a real AI model.
