@@ -1,42 +1,22 @@
-# Smart Pool Security
+# PoolGuard web interface
 
-The application is organized as two separately deployable services:
+This repository builds the Vaadin web application. Its Cameras page reads the latest JPEG from the protected PoolGuard API and refreshes about every 1.5 seconds.
 
-- `backend/`: Java 17, Spring Boot REST API, PostgreSQL in production, and local H2 for development.
-- `frontend/`: standalone Spanish HTML, CSS, and JavaScript site.
+## Deploy the web service to Render
 
-The previous folders `smart-pool-backend/` and `Smart-pool-Frontend/` are preserved as source backups and excluded from Git. Use only the new `backend/` and `frontend/` folders going forward.
+The existing Render service uses `PoolGuardVaadin` as its Root Directory and `./Dockerfile` as its Dockerfile. Keep those settings. Set these environment variables on the web service:
 
-## Local setup
+- `POOLGUARD_BACKEND_URL`: the public HTTPS URL of the API service, for example `https://YOUR-API.onrender.com`.
+- `POOLGUARD_INGEST_TOKEN`: the same private token configured on the API service.
+- `POOLGUARD_CAMERA_ID`: `phone-camera`, unless the local client uses another ID.
 
-1. Start the API from `backend/` with JDK 17 and Maven: `mvn spring-boot:run`.
-2. Serve `frontend/` with a local static server such as VS Code Live Server at `http://localhost:5500`.
-3. The local API URL is set in `frontend/assets/config.js` to `http://localhost:8080`.
-4. To enable login and registration locally, set `SMARTPOOL_AUTH_ENABLED=true`, `SMARTPOOL_AUTH_USERNAME`, and `SMARTPOOL_AUTH_PASSWORD` before starting the API. The configured admin password must have at least 16 characters.
+The API URL and token stay on the web server; the browser receives only the current image rendered by the Vaadin page. Do not put the token in client-side JavaScript or commit it to Git.
 
-## Separate Render deployment
+## Connect the phone camera
 
-Use this repository for both services, with the service-specific root directories:
+1. Start IP Webcam on the phone and leave it connected to Wi-Fi.
+2. Run the `PoolGuardBackend` local Java client on a computer on the same Wi-Fi.
+3. Configure the local client with the stream URL from IP Webcam, the public HTTPS API URL, and the shared token.
+4. Open the Cameras page. It shows the most recently received frame and reports when the local client stops sending.
 
-### Backend Web Service
-
-- Root Directory: `backend`
-- Runtime: Docker
-- Dockerfile Path: `./Dockerfile`
-- Docker Build Context: `.`
-- Health Check Path: `/health`
-- Add a PostgreSQL database and set `SPRING_PROFILES_ACTIVE=prod`, `SMARTPOOL_AUTH_ENABLED=true`, `SMARTPOOL_AUTH_USERNAME`, `SMARTPOOL_AUTH_PASSWORD`, `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASSWORD`, and `SMARTPOOL_FRONTEND_ORIGIN` in Render.
-
-### Frontend Static Site
-
-- Root Directory: `frontend`
-- Build Command: leave empty
-- Publish Directory: `.`
-- After Render gives the backend URL, set that URL in `frontend/assets/config.js` as `SMARTPOOL_API_URL` and push the change.
-- Set `SMARTPOOL_FRONTEND_ORIGIN` on the backend to the exact public URL of the Static Site, then redeploy the backend.
-
-Do not commit database credentials or admin passwords. The signup form creates user accounts in PostgreSQL with BCrypt-hashed passwords. The admin login remains configured through Render secrets.
-
-## Demo limitations
-
-Pool, camera, and alert records are demonstration data. Camera feeds and AI analysis are simulated; this project does not connect to physical cameras or run a real AI model.
+The service stores the most recent frame in memory only. It does not record video. A separate real risk-analysis service is still required for detections; without it the application must remain in a waiting state.
