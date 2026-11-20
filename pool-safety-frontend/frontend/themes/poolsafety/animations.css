@@ -1,0 +1,176 @@
+/* Animation system. Rules: short, finite, never hides errors or fakes availability. */
+
+html {
+  --ps-ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --ps-duration-fast: 120ms;
+  --ps-duration: 200ms;
+  --ps-duration-slow: 320ms;
+}
+
+/* ---------- View transitions: fade and slide ---------- */
+@keyframes ps-fade-slide-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes ps-fade-slide-out {
+  from { opacity: 1; transform: none; }
+  to   { opacity: 0; transform: translateY(-8px); }
+}
+::view-transition-old(root) {
+  animation: ps-fade-slide-out var(--ps-duration) var(--ps-ease) both;
+}
+::view-transition-new(root) {
+  animation: ps-fade-slide-in var(--ps-duration-slow) var(--ps-ease) both;
+}
+
+/* ---------- Cards: subtle hover elevation ---------- */
+.ps-card {
+  box-shadow: var(--lumo-box-shadow-xs);
+  transition: box-shadow var(--ps-duration) var(--ps-ease), transform var(--ps-duration) var(--ps-ease);
+}
+@media (hover: hover) {
+  .ps-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--lumo-box-shadow-m);
+  }
+}
+
+/* ---------- Menu expansion and collapse ---------- */
+@keyframes ps-menu-expand {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: none; }
+}
+vaadin-side-nav-item[expanded]::part(children) {
+  animation: ps-menu-expand var(--ps-duration) var(--ps-ease) both;
+}
+vaadin-side-nav-item::part(toggle-button) {
+  transition: transform var(--ps-duration) var(--ps-ease);
+}
+
+/* ---------- Dialogs ---------- */
+@keyframes ps-dialog-in {
+  from { opacity: 0; transform: translateY(12px) scale(0.98); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes ps-dialog-out {
+  from { opacity: 1; transform: none; }
+  to   { opacity: 0; transform: translateY(8px) scale(0.98); }
+}
+vaadin-dialog-overlay[opening]::part(overlay) {
+  animation: ps-dialog-in var(--ps-duration-slow) var(--ps-ease) both;
+}
+vaadin-dialog-overlay[closing]::part(overlay) {
+  animation: ps-dialog-out var(--ps-duration) var(--ps-ease) both;
+}
+
+/* ---------- Toast notifications ---------- */
+@keyframes ps-toast-in {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes ps-toast-out {
+  from { opacity: 1; transform: none; }
+  to   { opacity: 0; transform: translateY(8px); }
+}
+vaadin-notification-card[opening] {
+  animation: ps-toast-in var(--ps-duration) var(--ps-ease) both;
+}
+vaadin-notification-card[closing] {
+  animation: ps-toast-out var(--ps-duration-fast) var(--ps-ease) both;
+}
+
+/* ---------- Skeleton shimmer while backend data loads ---------- */
+@keyframes ps-shimmer {
+  to { transform: translateX(100%); }
+}
+.ps-skeleton {
+  position: relative;
+  overflow: hidden;
+  min-height: 1em;
+  border-radius: var(--lumo-border-radius-m);
+  background: var(--lumo-contrast-10pct);
+}
+.ps-skeleton::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, var(--lumo-contrast-10pct), transparent);
+  animation: ps-shimmer 1.6s linear infinite;
+}
+
+/* ---------- Login progress indicator (the form sets [disabled] while submitting) ---------- */
+@keyframes ps-progress {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(250%); }
+}
+vaadin-login-form[disabled] {
+  position: relative;
+  overflow: hidden;
+}
+vaadin-login-form[disabled]::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 3px;
+  width: 40%;
+  background: var(--ps-accent);
+  animation: ps-progress 1.2s var(--ps-ease) 4;
+}
+
+/* ---------- Traffic-light risk colors ---------- */
+.ps-risk {
+  background-color: var(--ps-risk-unknown);
+  color: #ffffff;
+  transition: background-color var(--ps-duration-slow) var(--ps-ease),
+              color var(--ps-duration-slow) var(--ps-ease),
+              box-shadow var(--ps-duration-slow) var(--ps-ease);
+}
+.ps-risk[data-level='GREEN']  { background-color: var(--ps-risk-green);  color: var(--ps-risk-green-fg); }
+.ps-risk[data-level='YELLOW'] { background-color: var(--ps-risk-yellow); color: var(--ps-risk-yellow-fg); }
+.ps-risk[data-level='RED']    { background-color: var(--ps-risk-red);    color: var(--ps-risk-red-fg); }
+
+/* Limited pulse: active RED alerts only, 3 repetitions, then it stops */
+@keyframes ps-red-pulse {
+  0%   { box-shadow: 0 0 0 0 rgba(239, 83, 80, 0.5); }
+  100% { box-shadow: 0 0 0 10px rgba(239, 83, 80, 0); }
+}
+.ps-risk[data-level='RED'][data-active='true'] {
+  animation: ps-red-pulse 1.4s ease-out 3;
+}
+
+/* ---------- Reduced motion: disable everything nonessential ---------- */
+@media (prefers-reduced-motion: reduce) {
+  vaadin-side-nav-item[expanded]::part(children),
+  vaadin-dialog-overlay[opening]::part(overlay),
+  vaadin-dialog-overlay[closing]::part(overlay),
+  vaadin-notification-card[opening],
+  vaadin-notification-card[closing],
+  vaadin-login-form[disabled]::after {
+    animation: none;
+  }
+  .ps-card,
+  vaadin-side-nav-item::part(toggle-button) {
+    transition: none;
+  }
+  .ps-card:hover {
+    transform: none;
+  }
+  .ps-skeleton::after {
+    animation: none;
+    display: none;
+  }
+  .ps-risk {
+    transition: none;
+  }
+  .ps-risk[data-level='RED'][data-active='true'] {
+    animation: none;
+  }
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}
