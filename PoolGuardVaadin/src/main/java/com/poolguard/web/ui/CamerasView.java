@@ -6,6 +6,7 @@ import com.vaadin.flow.component.DetachEvent;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Paragraph;
+import com.vaadin.flow.server.StreamResource;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.shared.Registration;
@@ -21,6 +22,7 @@ public final class CamerasView extends VerticalLayout {
     private final Paragraph status = new Paragraph("Checking camera feed…");
     private final Image frame = new Image("Latest camera frame", "Latest frame sent from the phone camera");
     private Registration pollRegistration;
+    private boolean streamStarted;
 
     public CamerasView(CameraFeedClient cameraFeedClient) {
         this.cameraFeedClient = cameraFeedClient;
@@ -37,7 +39,7 @@ public final class CamerasView extends VerticalLayout {
     @Override
     protected void onAttach(AttachEvent event) {
         UI ui = event.getUI();
-        ui.setPollInterval(3_000);
+        ui.setPollInterval(2_000);
         pollRegistration = ui.addPollListener(pollEvent -> refreshFrame());
         refreshFrame();
     }
@@ -52,13 +54,27 @@ public final class CamerasView extends VerticalLayout {
     }
 
     private void refreshFrame() {
+        if (streamStarted) {
+            return;
+        }
         CameraFeedClient.FrameResult latest = cameraFeedClient.latestFrame();
         status.setText(latest.status());
         if (latest.jpeg() == null) {
             frame.setVisible(false);
             return;
         }
-        frame.setSrc(latest.dataUri());
+        StreamResource liveStream = new StreamResource("camera.mjpg",
+                (output, session) -> cameraFeedClient.copyLiveStreamTo(output));
+        liveStream.setContentType("multipart/x-mixed-replace; boundary=frame");
+        liveStream.setCacheTime(0);
+        frame.setSrc(liveStream);
         frame.setVisible(true);
+        status.setText("Live stream from the phone camera.");
+        streamStarted = true;
+        getUI().ifPresent(ui -> ui.setPollInterval(-1));
+        if (pollRegistration != null) {
+            pollRegistration.remove();
+            pollRegistration = null;
+        }
     }
 }
