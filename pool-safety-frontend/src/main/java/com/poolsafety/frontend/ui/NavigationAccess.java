@@ -23,7 +23,7 @@ public final class NavigationAccess {
 
     private static final List<Entry> ENTRIES = List.of(
             new Entry("nav.dashboard", "", VaadinIcon.DASHBOARD, ALL, true),
-            new Entry("nav.pools", "pools", VaadinIcon.WATER, ALL, false),
+            new Entry("nav.pools", "pools", VaadinIcon.DROP, ALL, false),
             new Entry("nav.cameras", "cameras", VaadinIcon.CAMERA, ALL, false),
             new Entry("nav.alerts", "alerts", VaadinIcon.BELL, ALL, false),
             new Entry("nav.incidents", "incidents", VaadinIcon.WARNING, ALL, false),
