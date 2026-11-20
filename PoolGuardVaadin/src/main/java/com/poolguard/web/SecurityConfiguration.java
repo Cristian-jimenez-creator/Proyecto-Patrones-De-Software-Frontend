@@ -1,5 +1,6 @@
 package com.poolguard.web;
 
+import com.poolguard.web.ui.LoginView;
 import com.vaadin.flow.spring.security.VaadinSecurityConfigurer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,9 +14,8 @@ public class SecurityConfiguration {
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.with(VaadinSecurityConfigurer.vaadin(), configurer -> {
-            // Keep Spring Boot's generated login form and user credentials.
-        });
+        http.with(VaadinSecurityConfigurer.vaadin(), configurer ->
+                configurer.loginView(LoginView.class));
         return http.build();
     }
 }
