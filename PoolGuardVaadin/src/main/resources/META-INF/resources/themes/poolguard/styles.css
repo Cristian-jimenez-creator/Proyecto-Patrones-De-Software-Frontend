@@ -1,0 +1,12 @@
+:root { --pg-navy:#10283d; --pg-blue:#1767a6; --pg-red:#b72626; }
+html { background:#f4f7fa; }
+.app-header { width:100%; align-items:center; padding:.75rem 1.25rem; background:var(--pg-navy); color:white; }
+.brand { margin:0; color:white; letter-spacing:.08em; }
+.view { padding:clamp(1rem,3vw,2.5rem); animation:view-in .32s ease-out both; }
+.risk-card { border-radius:16px; padding:1.2rem 1.4rem; font-size:1.1rem; font-weight:700; box-shadow:0 6px 20px #10283d18; transition:transform .2s ease, box-shadow .2s ease, background-color .5s ease; }
+.risk-card:hover { transform:translateY(-2px); box-shadow:0 12px 28px #10283d25; }
+.risk-waiting { background:#e7edf2; color:#455764; }
+.risk-danger { background:var(--pg-red); color:white; animation:danger-pulse 1.8s ease-in-out 3; }
+@keyframes view-in { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+@keyframes danger-pulse { 50% { box-shadow:0 0 0 7px #b7262630; } }
+@media (prefers-reduced-motion:reduce) { *,*::before,*::after { animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; } }
