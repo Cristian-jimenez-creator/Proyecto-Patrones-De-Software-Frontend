@@ -5,9 +5,11 @@ import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import jakarta.annotation.security.PermitAll;
 
 @Route(value = "cameras/add", layout = MainLayout.class)
 @PageTitle("Add camera | PoolGuard")
+@PermitAll
 public final class AddCameraView extends VerticalLayout {
     public AddCameraView() {
         addClassName("view");

@@ -7,7 +7,9 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.sidenav.SideNav;
 import com.vaadin.flow.component.sidenav.SideNavItem;
 import com.vaadin.flow.router.RouterLink;
+import jakarta.annotation.security.PermitAll;
 
+@PermitAll
 public final class MainLayout extends AppLayout {
     public MainLayout() {
         H2 brand = new H2("POOLGUARD"); brand.addClassName("brand");

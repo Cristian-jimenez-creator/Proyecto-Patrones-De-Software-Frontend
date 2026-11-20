@@ -11,9 +11,11 @@ import com.vaadin.flow.component.UI;
 import com.vaadin.flow.shared.Registration;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import jakarta.annotation.security.PermitAll;
 
 @Route(value = "cameras", layout = MainLayout.class)
 @PageTitle("Cameras | PoolGuard")
+@PermitAll
 public final class CamerasView extends VerticalLayout {
     private final CameraFeedClient cameraFeedClient;
     private final Paragraph status = new Paragraph("Checking camera feed…");
