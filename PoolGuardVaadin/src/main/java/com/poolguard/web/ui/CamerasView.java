@@ -37,7 +37,7 @@ public final class CamerasView extends VerticalLayout {
     @Override
     protected void onAttach(AttachEvent event) {
         UI ui = event.getUI();
-        ui.setPollInterval(1_500);
+        ui.setPollInterval(3_000);
         pollRegistration = ui.addPollListener(pollEvent -> refreshFrame());
         refreshFrame();
     }
