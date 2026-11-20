@@ -7,6 +7,9 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.ZonedDateTime;
@@ -40,6 +43,51 @@ public final class CameraFeedClient {
             return cachedResult;
         }
         return fetchLatestFrame();
+    }
+
+    public void copyLiveStreamTo(OutputStream output) throws IOException {
+        try (InputStream input = openLiveStream()) {
+            byte[] buffer = new byte[16 * 1024];
+            int count;
+            while ((count = input.read(buffer)) != -1) {
+                output.write(buffer, 0, count);
+                output.flush();
+            }
+        }
+    }
+
+    private InputStream openLiveStream() throws IOException {
+        if (backendUrl.isBlank() || token.isBlank()) {
+            throw new IOException("Camera stream is not configured.");
+        }
+        URI baseUri = URI.create(backendUrl.replaceAll("/+$", ""));
+        if (!"https".equalsIgnoreCase(baseUri.getScheme())
+                && !("http".equalsIgnoreCase(baseUri.getScheme())
+                    && ("localhost".equalsIgnoreCase(baseUri.getHost())
+                        || "127.0.0.1".equals(baseUri.getHost())
+                        || "::1".equals(baseUri.getHost())))) {
+            throw new IOException("Camera API must use HTTPS.");
+        }
+        if (!cameraId.matches("[A-Za-z0-9._-]{1,80}")) {
+            throw new IOException("Camera identifier is invalid.");
+        }
+        URI endpoint = baseUri.resolve("/api/cameras/" + cameraId + "/frames/stream.mjpg");
+        HttpRequest request = HttpRequest.newBuilder(endpoint)
+                .header("Authorization", "Bearer " + token)
+                .header("Accept", "multipart/x-mixed-replace")
+                .GET()
+                .build();
+        try {
+            HttpResponse<InputStream> response = client.send(request, HttpResponse.BodyHandlers.ofInputStream());
+            if (response.statusCode() / 100 != 2) {
+                response.body().close();
+                throw new IOException("Camera stream returned HTTP " + response.statusCode() + ".");
+            }
+            return response.body();
+        } catch (InterruptedException exception) {
+            Thread.currentThread().interrupt();
+            throw new IOException("Opening the camera stream was interrupted.", exception);
+        }
     }
 
     private FrameResult fetchLatestFrame() {
